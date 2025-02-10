@@ -22,13 +22,23 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Install Required Workloads
-        run: dotnet workload restore
+        run: |
+          dotnet workload install maui-android maui-ios maui-maccatalyst
+          dotnet workload restore
+
+      - name: Install Missing Runtime Packs
+        run: |
+          dotnet tool install --global redth.net.maui-check
+          maui-check --fix
 
       - name: Set Xcode Version
         run: sudo xcode-select -s /Applications/Xcode_15.0.app
 
       - name: Verify .NET SDK
         run: dotnet --info
+
+      - name: Clean Build Directory
+        run: dotnet clean && dotnet nuget locals all --clear
 
       - name: Build MacCatalyst App
         run: dotnet publish -c Release -f net9.0-maccatalyst --no-self-contained
