@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-latest # Ensures latest MacOS version
+    runs-on: macos-latest
     
     steps:
       - name: Checkout repository
@@ -24,7 +24,7 @@ jobs:
       - name: Install Required Workloads
         run: dotnet workload restore
 
-      - name: Select Xcode 15
+      - name: Set Xcode Version
         run: sudo xcode-select -s /Applications/Xcode_15.0.app
 
       - name: Build MacCatalyst App
