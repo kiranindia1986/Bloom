@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-14  # Ensures latest macOS
+    runs-on: macos-14  # Use a stable macOS runner
 
     steps:
       - name: Checkout Repository
@@ -21,35 +21,29 @@ jobs:
       - name: Accept Xcode License
         run: sudo xcodebuild -license accept
 
+      - name: Ensure Xcode CLI Tools are Installed
+        run: |
+          sudo rm -rf /Library/Developer/CommandLineTools
+          sudo xcode-select --install || true
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcode-select --print-path
+
+      - name: Verify Xcode and MacCatalyst SDK
+        run: |
+          xcodebuild -version
+          xcode-select --print-path
+          ls /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
+
       - name: Install Required .NET Workloads
         run: |
           dotnet workload install maui maui-maccatalyst
           dotnet workload restore
 
-      - name: Ensure Correct Xcode Version
+      - name: Fix Missing Actool and Assets Issue
         run: |
-          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-          xcodebuild -version
-          xcode-select --print-path
-          ls /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
-
-      - name: Reinstall Xcode Command Line Tools
-        run: |
-          sudo rm -rf /Library/Developer/CommandLineTools
-          sudo xcode-select --install || true
-          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           sudo softwareupdate --all --install --force
-
-      - name: Verify Xcode Tools
-        run: |
           xcrun -find actool || echo "❌ actool missing!"
           xcrun --sdk macosx --show-sdk-path
-
-      - name: Clean & Restore Workloads
-        run: |
-          dotnet nuget locals all --clear
-          dotnet workload update
-          dotnet workload restore
 
       - name: Build macOS App
         run: dotnet build -c Release -f net9.0-maccatalyst
