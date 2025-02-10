@@ -18,6 +18,12 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
+      - name: Install Required .NET Workloads
+        run: |
+          dotnet workload install maui maui-maccatalyst
+          dotnet workload install maui-android || true  # Install Android to avoid errors
+          dotnet workload restore
+
       - name: Install Latest Xcode & Command Line Tools
         run: |
           sudo softwareupdate --install-rosetta --agree-to-license || true
@@ -28,24 +34,12 @@ jobs:
           xcode-select --print-path
           xcrun --sdk macosx --show-sdk-path
 
-      - name: Verify MacCatalyst & Xcode Setup
+      - name: Verify Workloads & MacCatalyst Setup
         run: |
-          sudo xcodebuild -runFirstLaunch || true
-          sudo xcode-select -r
+          dotnet workload list
+          dotnet --info
           xcodebuild -showsdks
           xcrun -find actool || echo "actool missing"
-          ls -la /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
-
-      - name: Fix ResolveFrameworkReference Issue
-        run: |
-          dotnet nuget locals all --clear
-          dotnet workload repair
-          dotnet workload update
-          dotnet restore
-
-      - name: Ensure Proper MacCatalyst SDK Version
-        run: |
-          sed -i '' 's/<SupportedOSPlatformVersion>.*<\/SupportedOSPlatformVersion>/<SupportedOSPlatformVersion>17.5<\/SupportedOSPlatformVersion>/' Bloom/Bloom.csproj || true
 
       - name: Build macOS App
         run: dotnet build -c Release -f net9.0-maccatalyst
