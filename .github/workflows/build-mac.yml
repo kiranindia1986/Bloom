@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-14 # Ensure macOS 14 runner is used
 
     steps:
       - name: Checkout Repository
@@ -17,14 +17,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 9.0.x
-
-      - name: List Installed .NET Workloads
-        run: dotnet workload list
-
-      - name: Install Missing .NET Workloads
-        run: |
-          dotnet workload install maui maui-maccatalyst
-          dotnet workload restore
 
       - name: Install Latest Xcode & Command Line Tools
         run: |
