@@ -34,9 +34,9 @@ jobs:
           mkdir -p build-output
           mv ./bin/Release/net9.0-maccatalyst/*.app ./build-output
 
-      # Upload the .app as an artifact
+      # Upload the .app as an artifact (using the latest artifact action)
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macOS-app
           path: build-output/*.app
