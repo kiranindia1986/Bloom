@@ -21,22 +21,46 @@ jobs:
       - name: List Installed .NET Workloads
         run: dotnet workload list
 
-      - name: Install Missing Workloads
-        run: dotnet workload install maui maui-maccatalyst
+      - name: Install Missing .NET Workloads
+        run: |
+          dotnet workload install maui maui-maccatalyst
+          dotnet workload restore
 
       - name: Select Latest Xcode Version
         run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-      - name: Restore Workloads
-        run: dotnet workload restore
-
-      - name: Install Latest MacCatalyst SDK
+      - name: Install Latest MacCatalyst SDK & Xcode CLI Tools
         run: |
-          sudo softwareupdate --all --install --force
-          sudo xcode-select --install
+          sudo softwareupdate --install-rosetta --agree-to-license || true
+          sudo softwareupdate --install "Command Line Tools for Xcode" || true
+          sudo softwareupdate --all --install --force || true
+          sudo xcode-select --install || true
+
+      - name: Verify Xcode Installation
+        run: xcodebuild -version
+
+      - name: Check Available SDKs
+        run: xcrun --sdk macosx --show-sdk-path
+
+      - name: Fix Empty ResolveFrameworkReference.RuntimePackPath Issue
+        run: |
+          dotnet nuget locals all --clear
+          dotnet workload repair
+          dotnet workload update
+          dotnet restore
+
+      - name: Ensure Proper MacCatalyst Target Version
+        run: |
+          sed -i '' 's/<SupportedOSPlatformVersion>.*<\/SupportedOSPlatformVersion>/<SupportedOSPlatformVersion>17.5<\/SupportedOSPlatformVersion>/' Bloom/Bloom.csproj || true
 
       - name: Build macOS App
         run: dotnet build -c Release -f net9.0-maccatalyst
 
       - name: Publish macOS App
         run: dotnet publish -c Release -f net9.0-maccatalyst --no-self-contained
+
+      - name: Upload macOS Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: macOS-app
+          path: Bloom/bin/Release/net9.0-maccatalyst/maccatalyst-x64/
