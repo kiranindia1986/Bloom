@@ -16,11 +16,13 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.x' # Match your project's .NET version
+          dotnet-version: '9.x'  # Or your .NET version
           include-prerelease: false
 
-      - name: Install MAUI Workloads  # Add this step!!!
-        run: dotnet workload install maui-maccatalyst
+      - name: Install MAUI Workloads
+        run: |
+          dotnet workload install maui-maccatalyst
+          dotnet workload install android  # VERY IMPORTANT: Add this line!
 
       - name: Restore NuGet packages
         run: dotnet restore
@@ -31,10 +33,10 @@ jobs:
       - name: Archive .app
         run: |
           mkdir -p build_artifacts
-          zip -r build_artifacts/MyApp.app.zip ./bin/Release/net9.0-maccatalyst/MyApp.app # Adjust path
+          zip -r build_artifacts/MyApp.app.zip ./bin/Release/net9.0-maccatalyst/MyApp.app  # Adjust path
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-app
-          path: build_artifacts/MyApp.app.zip
+          path: build_artifacts/MyApp.app.zip  # Adjust path
