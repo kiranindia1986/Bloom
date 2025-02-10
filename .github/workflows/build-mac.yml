@@ -11,10 +11,14 @@ on:
 jobs:
   build-macos:
     runs-on: macos-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Verify Repository Structure
+        run: ls -R
+        working-directory: ${{ github.workspace }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
@@ -26,6 +30,7 @@ jobs:
           dotnet workload install maui
           dotnet workload install maui-android maui-ios maui-maccatalyst
           dotnet workload restore
+        working-directory: Bloom/Bloom
 
       - name: Install Required Runtime Packs
         run: |
@@ -33,6 +38,7 @@ jobs:
           dotnet add package Microsoft.NETCore.App.Runtime.Mono.macOS-x64 --version 9.0.1
           dotnet add package Microsoft.NETCore.App.Runtime.Mono.macOS-arm64 --version 9.0.1
           dotnet add package Microsoft.MacCatalyst.Sdk --version 9.0.1
+        working-directory: Bloom/Bloom
 
       - name: Set Xcode Version
         run: sudo xcode-select -s /Applications/Xcode_15.0.app
@@ -44,14 +50,16 @@ jobs:
 
       - name: Clean Build Directory
         run: dotnet clean && dotnet nuget locals all --clear
+        working-directory: Bloom/Bloom
 
       - name: Build MacCatalyst App
         run: dotnet publish -c Release -f net9.0-maccatalyst --no-self-contained
+        working-directory: Bloom/Bloom
 
       - name: Upload MacCatalyst Build
         uses: actions/upload-artifact@v4
         with:
           name: BloomMacCatalyst
           path: |
-            Bloom/bin/Release/net9.0-maccatalyst/**/*.app
-            Bloom/bin/Release/net9.0-maccatalyst/**/*.dmg
+            Bloom/Bloom/bin/Release/net9.0-maccatalyst/**/*.app
+            Bloom/Bloom/bin/Release/net9.0-maccatalyst/**/*.dmg
