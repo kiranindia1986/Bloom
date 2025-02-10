@@ -26,30 +26,32 @@ jobs:
           dotnet workload install maui maui-maccatalyst
           dotnet workload restore
 
-      - name: Select Latest Xcode Version
-        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-
-      - name: Install Latest MacCatalyst SDK & Xcode CLI Tools
+      - name: Install Latest Xcode & Command Line Tools
         run: |
           sudo softwareupdate --install-rosetta --agree-to-license || true
           sudo softwareupdate --install "Command Line Tools for Xcode" || true
-          sudo softwareupdate --all --install --force || true
           sudo xcode-select --install || true
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+          xcode-select --print-path
+          xcrun --sdk macosx --show-sdk-path
 
-      - name: Verify Xcode Installation
-        run: xcodebuild -version
+      - name: Verify MacCatalyst & Xcode Setup
+        run: |
+          sudo xcodebuild -runFirstLaunch || true
+          sudo xcode-select -r
+          xcodebuild -showsdks
+          xcrun -find actool || echo "actool missing"
+          ls -la /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
 
-      - name: Check Available SDKs
-        run: xcrun --sdk macosx --show-sdk-path
-
-      - name: Fix Empty ResolveFrameworkReference.RuntimePackPath Issue
+      - name: Fix ResolveFrameworkReference Issue
         run: |
           dotnet nuget locals all --clear
           dotnet workload repair
           dotnet workload update
           dotnet restore
 
-      - name: Ensure Proper MacCatalyst Target Version
+      - name: Ensure Proper MacCatalyst SDK Version
         run: |
           sed -i '' 's/<SupportedOSPlatformVersion>.*<\/SupportedOSPlatformVersion>/<SupportedOSPlatformVersion>17.5<\/SupportedOSPlatformVersion>/' Bloom/Bloom.csproj || true
 
