@@ -1,0 +1,974 @@
+﻿<TabbedPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+            x:Class="Bloom.MainPage"
+            Title="Bloom Initiative"
+            xmlns:models="x:Static models:Bloom.Models">
+    
+    <ContentPage Title="Loaded Script">
+        <VerticalStackLayout Padding="5">
+            <HorizontalStackLayout Spacing="10" Margin="0,0,0,10">
+                <Button Text="Load" Clicked="OnLoadClicked" />
+                <Button Text="Save" Clicked="buttonSave_Clicked" />
+                <Button Text="Clear Script" Clicked="OnClearScriptClicked" />
+                <!-- Label to display filename -->
+                <Label x:Name="labelFilename" 
+           Text="New Script" 
+           FontSize="14" 
+           TextColor="White"
+           VerticalOptions="Center"
+           Padding="5,0" />
+            </HorizontalStackLayout>
+            
+            <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="5" Margin="10,10,10,0">
+                <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="350">
+                    <CollectionView x:Name="dataGridView1" SelectionMode="Single" ItemsSource="{Binding textEvents}">
+                        <!-- Header with background color -->
+                        <CollectionView.Header>
+                            <Grid BackgroundColor="#2A2A2A" Padding="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.1*"/>
+                                    <ColumnDefinition Width="0.4*"/>
+                                    <ColumnDefinition Width="0.2*"/>
+                                    <ColumnDefinition Width="0.2*"/>
+                                    <ColumnDefinition Width="0.1*"/>
+                                    <ColumnDefinition Width="0.1*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Center-aligned header labels -->
+                                <Label Text="Time (s)" FontAttributes="Bold" Grid.Column="0" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                <Label Text="Text" FontAttributes="Bold" Grid.Column="1" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                <Label Text="Speech Type" FontAttributes="Bold" Grid.Column="2" TextColor="White"  HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                <Label Text="Face Type" FontAttributes="Bold" Grid.Column="3" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                <Label Text="Character" FontAttributes="Bold" Grid.Column="4" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                                <Label Text="Wait For Input" FontAttributes="Bold" Grid.Column="5" TextColor="White" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            </Grid>
+                        </CollectionView.Header>
+
+                        <!-- Data rows -->
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.1*"/>
+                                        <ColumnDefinition Width="0.4*"/>
+                                        <ColumnDefinition Width="0.2*"/>
+                                        <ColumnDefinition Width="0.2*"/>
+                                        <ColumnDefinition Width="0.1*"/>
+                                        <ColumnDefinition Width="0.1*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Center-aligned content in rows -->
+                                    <Entry Text="{Binding Time, Mode=TwoWay}" Grid.Column="0" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" BackgroundColor="White" TextColor="Black"/>
+                                    <Entry Text="{Binding Text, Mode=TwoWay}" Grid.Column="1" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" BackgroundColor="White" TextColor="Black"/>
+                                    <Picker ItemsSource="{StaticResource SpeechTypes}" SelectedItem="{Binding SpeechType, Mode=TwoWay}" Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Picker ItemsSource="{StaticResource FaceTypes}" SelectedItem="{Binding Face, Mode=TwoWay}" Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Picker ItemsSource="{StaticResource CharacterTypes}" SelectedItem="{Binding Character, Mode=TwoWay}" Grid.Column="4" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <CheckBox IsChecked="{Binding WaitForInput, Mode=TwoWay}" Grid.Column="5" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </ScrollView>
+            </Border>
+
+
+            <HorizontalStackLayout Spacing="10" Padding="10" Margin="0,0,0,0">
+                <!-- Aliens Section -->
+
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Create Aliens" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+                    </toolkit:Expander.Header>
+                        <toolkit:Expander.Content>
+                            <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0"  HeightRequest="300">
+                    <VerticalStackLayout Spacing="5">
+                                                <!-- ListView for Aliens -->
+                        <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="220" WidthRequest="300">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- ListView Section -->
+                                <Border Stroke="White" StrokeThickness="1" Padding="0" Grid.Column="0" Margin="0,0,10,0">
+                                    <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="200">
+                                        <ListView x:Name="AliensList" 
+                                  BackgroundColor="#2A2A2A"
+                                  HeightRequest="200"
+                                  SeparatorVisibility="Default"
+                                  VerticalOptions="FillAndExpand"
+                                  HorizontalOptions="FillAndExpand">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ViewCell>
+                                                        <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                    </ViewCell>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </ScrollView>
+                                </Border>
+
+                                <!-- Location Section -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="5" Padding="5">
+                                    <Label Text="Location" FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
+                                    <VerticalStackLayout Spacing="5">
+                                                <RadioButton x:Name="radioButtonRandomAliens" FontSize="12" Content="Random" IsChecked="True" TextColor="White" />
+                                                <RadioButton x:Name="radioButtonXYAliens" FontSize="12" Content="X,Y" TextColor="White" />
+                                    </VerticalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="X" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                                <Entry x:Name="textBoxAlienX" Placeholder="Enter X" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="Y" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                                <Entry x:Name="textBoxAlienY" Placeholder="Enter Y" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="Quantity" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                                <Entry x:Name="textBoxAlienQuantity" Placeholder="Enter quantity" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                                <!-- Button -->
+                                <Button Text="Create Aliens" Clicked="OnCreateAliensClicked" HeightRequest="30" WidthRequest="200" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FF7F50" Offset="0.0" />
+                                            <GradientStop Color="#FF4500" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+                            </VerticalStackLayout>
+                </Border>
+                        </toolkit:Expander.Content>
+                </toolkit:Expander>
+
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Create Spawner" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+                       
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0" HeightRequest="300">
+                    <VerticalStackLayout Spacing="5">
+                        
+                        <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="200" WidthRequest="300">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- ListView Section -->
+                                <Border Stroke="White" StrokeThickness="1" Padding="0" Grid.Column="0" Margin="0,0,10,0">
+                                    <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="180">
+                                        <ListView x:Name="listBoxSpawner" 
+                                  BackgroundColor="#2A2A2A"
+                                  HeightRequest="200"
+                                  SeparatorVisibility="Default"
+                                  VerticalOptions="FillAndExpand"
+                                  HorizontalOptions="FillAndExpand">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ViewCell>
+                                                        <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                    </ViewCell>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </ScrollView>
+                                </Border>
+
+                                <!-- Location Section -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="10" Padding="5">
+                                    <Label Text="Location" FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
+                                    <VerticalStackLayout Spacing="5">
+                                        <RadioButton x:Name="radioButton3" Content="X,Y" TextColor="White" />
+                                    </VerticalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="X" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                        <Entry x:Name="textBoxSpawnX" Placeholder="Enter X" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="Y" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                        <Entry x:Name="textBoxSpawnY" Placeholder="Enter Y" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="Time" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                        <Entry x:Name="textBoxSpawnTime" Placeholder="Enter quantity" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                                <Button Text="Create Spawner" Clicked="ButtonCreateSpawner_Clicked" HeightRequest="30" WidthRequest="200" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#00BFFF" Offset="0.0" />
+                                            <GradientStop Color="#1E90FF" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+
+                            </VerticalStackLayout>
+                </Border>
+                    </toolkit:Expander.Content>
+                </toolkit:Expander>
+
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Wait on Building" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0" HeightRequest="300">
+                    <VerticalStackLayout Spacing="5">
+                        
+                        <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="200" WidthRequest="150">
+                            <VerticalStackLayout Spacing="10">
+                                <!-- ListView Section -->
+                                <Border Stroke="White" StrokeThickness="1" Padding="0" Margin="0,0,10,0">
+                                    <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="130">
+                                        <ListView x:Name="listBoxBuilding" 
+                          BackgroundColor="#2A2A2A"
+                          HeightRequest="100"
+                          SeparatorVisibility="Default"
+                          VerticalOptions="FillAndExpand"
+                          HorizontalOptions="FillAndExpand">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ViewCell>
+                                                        <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                    </ViewCell>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </ScrollView>
+                                </Border>
+
+                                <!-- Entry Section Below ListView -->
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="Quantity" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                    <Entry x:Name="textBoxBuildingQuantity" 
+                   Placeholder="Enter name" 
+                   Keyboard="Default" 
+                   WidthRequest="150" 
+                   BackgroundColor="White" 
+                   TextColor="Black" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Border>
+                                <Button Text="Wait on Building" Clicked="buttonWaitBuilding_Click" HeightRequest="30" WidthRequest="215" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#00BFFF" Offset="0.0" />
+                                            <GradientStop Color="#1E90FF" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+
+
+                            </VerticalStackLayout>
+                </Border>
+                    </toolkit:Expander.Content>
+                </toolkit:Expander>
+
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Create PowerUp" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+                       
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0" HeightRequest="300">
+                    <VerticalStackLayout Spacing="5">
+                        
+                        <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="200" WidthRequest="300">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- ListView Section -->
+                                <Border Stroke="White" StrokeThickness="1" Padding="0" Grid.Column="0" Margin="0,0,10,0">
+                                    <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="180">
+                                        <ListView x:Name="listBoxPowerUp" 
+                  BackgroundColor="#2A2A2A"
+                  HeightRequest="200"
+                  SeparatorVisibility="Default"
+                  VerticalOptions="FillAndExpand"
+                  HorizontalOptions="FillAndExpand">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ViewCell>
+                                                        <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                    </ViewCell>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </ScrollView>
+                                </Border>
+
+                                <!-- Location Section -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="10" Padding="5">
+                                    <Label Text="Location" FontSize="12" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
+                                    <VerticalStackLayout Spacing="5">
+                                        <RadioButton x:Name="radioButton1" Content="X,Y" TextColor="White" />
+                                    </VerticalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="X" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                        <Entry x:Name="textBoxPowerUpX" Placeholder="Enter X" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <Label Text="Y" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                        <Entry x:Name="textBoxPowerUpY" Placeholder="Enter Y" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                   
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                                <Button Text="Create PowerUp" Clicked="buttonCreatePowerUp_Click" HeightRequest="30" WidthRequest="200" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#00BFFF" Offset="0.0" />
+                                            <GradientStop Color="#1E90FF" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+
+                            </VerticalStackLayout>
+                </Border>
+                </toolkit:Expander.Content>
+                </toolkit:Expander>
+
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Winning Condition" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+                        
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0"  HeightRequest="300">
+                    <VerticalStackLayout Spacing="5">
+                        <!-- Button -->
+                        
+                        <!-- ListView for Aliens -->
+                        <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="220" WidthRequest="300">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- ListView Section -->
+                                <Border Stroke="White" StrokeThickness="1" Padding="0" Grid.Column="0" Margin="0,0,10,0">
+                                    <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="200">
+                                        <ListView x:Name="listBoxWinningCondition" 
+                  BackgroundColor="#2A2A2A"
+                  HeightRequest="200"
+                  SeparatorVisibility="Default"
+                  VerticalOptions="FillAndExpand"
+                  HorizontalOptions="FillAndExpand">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ViewCell>
+                                                        <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                    </ViewCell>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </ScrollView>
+                                </Border>
+
+                                
+                            </Grid>
+                        </Border>
+                                <Button Text="Winning Condition" Clicked="buttonWinningCondition_Click" HeightRequest="30" WidthRequest="200" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#FF7F50" Offset="0.0" />
+                                            <GradientStop Color="#FF4500" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+
+
+                            </VerticalStackLayout>
+                </Border>
+                    </toolkit:Expander.Content>
+                </toolkit:Expander>
+                
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Display Image" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0"  HeightRequest="300">
+                            <VerticalStackLayout Spacing="5">
+                                <!-- Button -->
+
+                                <HorizontalStackLayout Spacing="5" Margin="10,10,0,0">
+                                        <Label Text="Image Name" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                        <Entry x:Name="textBoxImageName" Placeholder="Script Image" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black" />
+                                    </HorizontalStackLayout>
+                                <HorizontalStackLayout Spacing="5" Margin="10,10,0,0">
+                                        <Label Text="Index" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                    <Entry x:Name="textBoxImageIndex" Placeholder="12" Keyboard="Numeric" WidthRequest="50" BackgroundColor="White" TextColor="Black"  Margin="40,10,0,0"/>
+                                    </HorizontalStackLayout>
+
+
+                                <Button Text="Display Image" Clicked="buttonCreateImage_Click" HeightRequest="40" WidthRequest="200" Margin="10,10,10,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center">
+                                        <Button.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#FF7F50" Offset="0.0" />
+                                                <GradientStop Color="#FF4500" Offset="1.0" />
+                                            </LinearGradientBrush>
+                                        </Button.Background>
+                                        <Button.Shadow>
+                                            <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                        </Button.Shadow>
+                                    </Button>
+                               
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </toolkit:Expander.Content>
+                </toolkit:Expander>
+                
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Wait Carrying" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0" HeightRequest="300">
+                            <VerticalStackLayout Spacing="5">
+
+                                <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="200" WidthRequest="200">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1.5*" />
+                                            
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- ListView Section -->
+                                        <Border Stroke="White" StrokeThickness="1" Padding="0" Grid.Column="0" Margin="0,0,10,0">
+                                            <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="180">
+                                                <ListView x:Name="listBoxCarrying" 
+  BackgroundColor="#2A2A2A"
+  HeightRequest="200"
+  SeparatorVisibility="Default"
+  VerticalOptions="FillAndExpand"
+  HorizontalOptions="FillAndExpand">
+                                                    <ListView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <ViewCell>
+                                                                <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                            </ViewCell>
+                                                        </DataTemplate>
+                                                    </ListView.ItemTemplate>
+                                                </ListView>
+                                            </ScrollView>
+                                        </Border>
+
+                                        
+                                    </Grid>
+                                </Border>
+                                <Button Text="Wait Carrying" Clicked="buttonCarrying_Click" HeightRequest="30" WidthRequest="200" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#00BFFF" Offset="0.0" />
+                                            <GradientStop Color="#1E90FF" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </toolkit:Expander.Content>
+                </toolkit:Expander>
+
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Controls" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0" HeightRequest="300">
+                            <VerticalStackLayout Spacing="5">
+
+                                <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="200" WidthRequest="200">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1.5*" />
+
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- ListView Section -->
+                                        <Border Stroke="White" StrokeThickness="1" Padding="0" Grid.Column="0" Margin="0,0,10,0">
+                                            <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="180">
+                                                <ListView x:Name="listBoxControls" 
+BackgroundColor="#2A2A2A"
+HeightRequest="200"
+SeparatorVisibility="Default"
+VerticalOptions="FillAndExpand"
+HorizontalOptions="FillAndExpand">
+                                                    <ListView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <ViewCell>
+                                                                <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                            </ViewCell>
+                                                        </DataTemplate>
+                                                    </ListView.ItemTemplate>
+                                                </ListView>
+                                            </ScrollView>
+                                        </Border>
+
+
+                                    </Grid>
+                                </Border>
+                                <Button Text="Controls" Clicked="buttonControls_Click" HeightRequest="30" WidthRequest="200" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#00BFFF" Offset="0.0" />
+                                            <GradientStop Color="#1E90FF" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </toolkit:Expander.Content>
+                </toolkit:Expander>
+
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Wait Resources" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0" HeightRequest="300">
+                            <VerticalStackLayout Spacing="5">
+
+                                <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="200" WidthRequest="150">
+                                    <VerticalStackLayout Spacing="10">
+                                        <!-- ListView Section -->
+                                        <Border Stroke="White" StrokeThickness="1" Padding="0" Margin="0,0,10,0">
+                                            <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="130">
+                                                <ListView x:Name="listBoxResources" 
+          BackgroundColor="#2A2A2A"
+          HeightRequest="100"
+          SeparatorVisibility="Default"
+          VerticalOptions="FillAndExpand"
+          HorizontalOptions="FillAndExpand">
+                                                    <ListView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <ViewCell>
+                                                                <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                            </ViewCell>
+                                                        </DataTemplate>
+                                                    </ListView.ItemTemplate>
+                                                </ListView>
+                                            </ScrollView>
+                                        </Border>
+
+                                        <!-- Entry Section Below ListView -->
+                                        <HorizontalStackLayout Spacing="5">
+                                            <Label Text="Quantity" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                            <Entry x:Name="textBoxResourceQuantity" 
+   Placeholder="Enter name" 
+   Keyboard="Default" 
+   WidthRequest="150" 
+   BackgroundColor="White" 
+   TextColor="Black" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Button Text="Wait Resources" Clicked="buttonWaitResources_Click" HeightRequest="30" WidthRequest="215" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#00BFFF" Offset="0.0" />
+                                            <GradientStop Color="#1E90FF" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </toolkit:Expander.Content>
+                </toolkit:Expander>
+
+                
+                
+                <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Grid Padding="1" BackgroundColor="Transparent">
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#FF7F50" Offset="0.0" />
+                                    <GradientStop Color="#FF4500" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Label Text="Weather" FontSize="14" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Padding="5" HorizontalOptions="Fill" VerticalOptions="Center" />
+                        </Grid>
+                    </toolkit:Expander.Header>
+                    <toolkit:Expander.Content>
+                        <Border Stroke="White" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="0" HeightRequest="300">
+                            <VerticalStackLayout Spacing="5">
+
+                                <Border Stroke="White" StrokeThickness="0" BackgroundColor="#2A2A2A" Padding="5" Margin="5,5,5,5" HeightRequest="200" WidthRequest="150">
+                                    <VerticalStackLayout Spacing="10">
+                                        <!-- ListView Section -->
+                                        <Border Stroke="White" StrokeThickness="1" Padding="0" Margin="0,0,10,0">
+                                            <ScrollView VerticalScrollBarVisibility="Always" HeightRequest="130">
+                                                <ListView x:Name="listBoxWeather" 
+       BackgroundColor="#2A2A2A"
+       HeightRequest="100"
+       SeparatorVisibility="Default"
+       VerticalOptions="FillAndExpand"
+       HorizontalOptions="FillAndExpand">
+                                                    <ListView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <ViewCell>
+                                                                <Label Text="{Binding}" Padding="5" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                                            </ViewCell>
+                                                        </DataTemplate>
+                                                    </ListView.ItemTemplate>
+                                                </ListView>
+                                            </ScrollView>
+                                        </Border>
+
+                                        <!-- Entry Section Below ListView -->
+                                        <HorizontalStackLayout Spacing="5">
+                                            <Label Text="Value" FontSize="12" TextColor="White" VerticalOptions="Center" />
+                                            <Entry x:Name="textBoxWeather" 
+Placeholder="Enter name" 
+Keyboard="Default" 
+WidthRequest="150" 
+BackgroundColor="White" 
+TextColor="Black" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Button Text="Weather" Clicked="buttonWeather_Click" HeightRequest="30" WidthRequest="215" Margin="0,10,0,0" CornerRadius="15" TextColor="White" FontAttributes="Bold" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Button.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#00BFFF" Offset="0.0" />
+                                            <GradientStop Color="#1E90FF" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Button.Background>
+                                    <Button.Shadow>
+                                        <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="5,5"/>
+                                    </Button.Shadow>
+                                </Button>
+
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </toolkit:Expander.Content>
+                </toolkit:Expander>
+
+            </HorizontalStackLayout>
+
+
+
+
+        </VerticalStackLayout>
+
+
+
+
+    </ContentPage>
+
+    <!-- Script Selection Tab -->
+    <ContentPage Title="Script Selection" BackgroundColor="#1E1E1E">
+        <VerticalStackLayout Padding="10" Spacing="10">
+
+            <!-- First Row: Directory Selection -->
+            <Grid ColumnDefinitions="*,*"
+              RowDefinitions="Auto">
+                <VerticalStackLayout Padding="10" Spacing="5" Grid.Column="0">
+                    <Label Text="Solo Directory" FontSize="14" TextColor="White"/>
+                    <Entry x:Name="textBoxSoloDirectory" BackgroundColor="White" TextColor="Black" TextChanged="OnSoloDirectoryChanged"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Padding="10" Spacing="5" Grid.Column="1">
+                    <Label Text="Coop Directory" FontSize="14" TextColor="White"/>
+                    <Entry x:Name="textBoxCoopDirectory" BackgroundColor="White" TextColor="Black" TextChanged="OnSoloDirectoryChanged"/>
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Spacer -->
+            <BoxView HeightRequest="10" Color="Transparent"/>
+
+            <!-- Second Row: List Boxes for Solo and Coop XML Files -->
+            <Grid ColumnDefinitions="*,*"
+              RowDefinitions="Auto">
+                <!-- Solo Scripts -->
+                <VerticalStackLayout Padding="10" Spacing="5" Grid.Column="0">
+                    <Label Text="Solo Scripts" FontSize="14" TextColor="White"/>
+                    <Grid RowDefinitions="Auto, *">
+                        <!-- Header Row -->
+                        <Grid BackgroundColor="#2A2A2A" RowDefinitions="Auto" ColumnDefinitions="2*,*,*">
+                            <Label Text="File Name" FontSize="12" TextColor="White" Padding="5" />
+                            <Label Text="File Size (KB)" FontSize="12" TextColor="White" Padding="5" Grid.Column="1" />
+                            <Label Text="Last Modified" FontSize="12" TextColor="White" Padding="5" Grid.Column="2" />
+                        </Grid>
+                        <!-- ListView -->
+                        <ListView x:Name="listViewSoloXmlFiles"
+                  BackgroundColor="#1E1E1E"
+                  HeightRequest="400"
+                  SeparatorVisibility="Default"
+                                  ItemSelected="OnFileSelected"
+                  Grid.Row="1">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid Padding="5" ColumnDefinitions="2*,*,*">
+                                            <Label Text="{Binding FileName}" TextColor="White" FontSize="14" VerticalTextAlignment="Center"/>
+                                            <Label Text="{Binding FileSize}" TextColor="White" FontSize="14" VerticalTextAlignment="Center" Grid.Column="1"/>
+                                            <Label Text="{Binding LastModified}" TextColor="White" FontSize="14" VerticalTextAlignment="Center" Grid.Column="2"/>
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </VerticalStackLayout>
+
+                <!-- Coop Scripts -->
+                <VerticalStackLayout Padding="10" Spacing="5" Grid.Column="1">
+                    <Label Text="Coop Scripts" FontSize="14" TextColor="White"/>
+                    <Grid RowDefinitions="Auto, *">
+                        <!-- Header Row -->
+                        <Grid BackgroundColor="#2A2A2A" RowDefinitions="Auto" ColumnDefinitions="2*,*,*">
+                            <Label Text="File Name" FontSize="12" TextColor="White" Padding="5" />
+                            <Label Text="File Size (KB)" FontSize="12" TextColor="White" Padding="5" Grid.Column="1" />
+                            <Label Text="Last Modified" FontSize="12" TextColor="White" Padding="5" Grid.Column="2" />
+                        </Grid>
+                        <!-- ListView -->
+                        <ListView x:Name="listViewCoopXmlFiles"
+                  BackgroundColor="#1E1E1E"
+                  HeightRequest="400"
+                  SeparatorVisibility="Default"
+                                  ItemSelected="OnFileSelected"
+                  Grid.Row="1">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid Padding="5" ColumnDefinitions="2*,*,*">
+                                            <Label Text="{Binding FileName}" TextColor="White" FontSize="14" VerticalTextAlignment="Center"/>
+                                            <Label Text="{Binding FileSize}" TextColor="White" FontSize="14" VerticalTextAlignment="Center" Grid.Column="1"/>
+                                            <Label Text="{Binding LastModified}" TextColor="White" FontSize="14" VerticalTextAlignment="Center" Grid.Column="2"/>
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </VerticalStackLayout>
+
+            </Grid>
+
+        </VerticalStackLayout>
+    </ContentPage>
+
+
+
+    <!-- Script Check Tab -->
+    <ContentPage Title="Script Check">
+        <VerticalStackLayout Padding="10" Spacing="10">
+
+            <!-- Row with Buttons and Search Box -->
+            <HorizontalStackLayout Spacing="10">
+                <Button x:Name="buttonCheckScripts" Clicked="buttonCheckScripts_Clicked"
+                    Text="Check Scripts"
+                    HeightRequest="40"
+                    BackgroundColor="#FF4500"
+                    TextColor="White"
+                    FontAttributes="Bold"/>
+
+                <Button x:Name="buttonFindWord" Clicked="buttonFindWord_Clicked"
+                    Text="Find Word"
+                    HeightRequest="40"
+                    BackgroundColor="#FF7F50"
+                    TextColor="White"
+                    FontAttributes="Bold"/>
+
+                <Entry x:Name="textBoxSearch"
+                   Placeholder="Search..."
+                   WidthRequest="200"
+                   BackgroundColor="White"
+                   TextColor="Black"/>
+            </HorizontalStackLayout>
+
+            <!-- Labels for List Views -->
+            <HorizontalStackLayout Spacing="10">
+                <Label Text="Solo"
+                   FontSize="16"
+                       WidthRequest="700"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Start"/>
+
+                <Label Text="Coop"
+                   FontSize="16"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="End"/>
+            </HorizontalStackLayout>
+
+            <!-- Two List Views Side by Side -->
+            <HorizontalStackLayout Spacing="10">
+                <!-- Solo ListBox -->
+                <ListView x:Name="listBoxCheckSoloErrors"
+          BackgroundColor="White"
+          HeightRequest="400"
+          WidthRequest="700"
+          SeparatorVisibility="Default"
+                                          ItemsSource="{Binding SoloErrors}"
+                    HorizontalOptions="FillAndExpand">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding}" TextColor="Black" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <ListView x:Name="listBoxCheckCoopErrors"
+          BackgroundColor="White"
+          HeightRequest="400"
+          WidthRequest="700"
+                          ItemsSource="{Binding CoopErrors}"
+          SeparatorVisibility="Default"
+          HorizontalOptions="FillAndExpand">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding}" TextColor="Black" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </ContentPage>
+
+    <!-- About Tab -->
+    <ContentPage Title="About">
+        <Grid>
+            <Image Source="about.png"
+               Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"/>
+        </Grid>
+    </ContentPage>
+
+
+
+</TabbedPage>
+
+
+
+
+    
+    
+    

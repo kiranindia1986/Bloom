@@ -1,0 +1,30 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bloom.App"
+             xmlns:models="clr-namespace:Bloom.Models">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Register Enum Lists -->
+            <x:Array Type="{x:Type models:TextType}" x:Key="SpeechTypes">
+                <models:TextType>text</models:TextType>
+                <models:TextType>speech</models:TextType>
+            </x:Array>
+
+            <x:Array Type="{x:Type models:FaceType}" x:Key="FaceTypes">
+                <models:FaceType>neutral</models:FaceType>
+                <models:FaceType>smile</models:FaceType>
+                <models:FaceType>celebrate</models:FaceType>
+                <models:FaceType>shock</models:FaceType>
+                <models:FaceType>calm</models:FaceType>
+                <models:FaceType>angry</models:FaceType>
+            </x:Array>
+
+            <x:Array Type="{x:Type models:CharacterType}" x:Key="CharacterTypes">
+                <models:CharacterType>hero</models:CharacterType>
+                <models:CharacterType>birdlord</models:CharacterType>
+                <models:CharacterType>wormlord</models:CharacterType>
+            </x:Array>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
