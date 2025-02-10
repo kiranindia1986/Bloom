@@ -60,7 +60,7 @@ jobs:
         run: dotnet publish -c Release -f net9.0-maccatalyst --no-self-contained
 
       - name: Upload macOS Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macOS-app
           path: Bloom/bin/Release/net9.0-maccatalyst/maccatalyst-x64/
