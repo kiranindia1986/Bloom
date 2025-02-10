@@ -1,39 +1,40 @@
 name: Build macOS App
 
 on:
-  push:  # Trigger the workflow on every push (you can customize this)
-    branches: [ main ] # Or your main branch name
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
   build-macos:
-    runs-on: macos-latest # Use a macOS runner
+    runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v3 # Checkout your repository code
+      - uses: actions/checkout@v3
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.x' # Or 8.x, match your project
-          include-prerelease: false # Set to true if using a preview SDK
+          dotnet-version: '9.x' # Match your project's .NET version
+          include-prerelease: false
+
+      - name: Install MAUI Workloads  # Add this step!!!
+        run: dotnet workload install maui-maccatalyst
 
       - name: Restore NuGet packages
         run: dotnet restore
 
       - name: Build macOS App
-        run: dotnet build -c Release -f net7.0-maccatalyst # Or your target framework
-        # If your .app is in a specific folder, adjust the path:
-        # run: dotnet build -c Release -f net7.0-maccatalyst -o ./output/macos/
+        run: dotnet build -c Release -f net9.0-maccatalyst
 
-      - name: Archive .app (Optional, but recommended)
+      - name: Archive .app
         run: |
           mkdir -p build_artifacts
-          zip -r build_artifacts/MyApp.app.zip ./bin/Release/net7.0-maccatalyst/MyApp.app # Adjust path
+          zip -r build_artifacts/MyApp.app.zip ./bin/Release/net9.0-maccatalyst/MyApp.app # Adjust path
 
-      - name: Upload Artifact (Optional, but highly recommended)
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos-app
-          path: build_artifacts/MyApp.app.zip # Or the path to your .app.zip
+          path: build_artifacts/MyApp.app.zip
