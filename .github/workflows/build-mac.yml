@@ -1,10 +1,7 @@
-name: Build MacCatalyst App
+name: Build macOS App
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -13,32 +10,25 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Debug Directory Structure
-        run: ls -R
-        working-directory: ${{ github.workspace }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: 9.0.x
 
-      - name: Install Required Workloads & Runtime Packs
-        run: |
-          dotnet workload install maui maui-maccatalyst
-          dotnet workload restore
-        working-directory: Bloom  # Adjust if needed
+      - name: List Installed .NET Workloads
+        run: dotnet workload list
 
-      - name: Build MacCatalyst App
+      - name: Install Missing Workloads
+        run: dotnet workload install maui maui-maccatalyst
+
+      - name: Restore Workloads
+        run: dotnet workload restore
+
+      - name: Build macOS App
+        run: dotnet build -c Release -f net9.0-maccatalyst
+
+      - name: Publish macOS App
         run: dotnet publish -c Release -f net9.0-maccatalyst --no-self-contained
-        working-directory: Bloom  # Adjust if needed
-
-      - name: Upload MacCatalyst Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: BloomMacCatalyst
-          path: |
-            Bloom/bin/Release/net9.0-maccatalyst/**/*.app
-            Bloom/bin/Release/net9.0-maccatalyst/**/*.dmg
