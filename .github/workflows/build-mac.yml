@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-14 # Ensure the correct macOS runner is used
+    runs-on: macos-14  # Ensures the latest macOS runner is used
 
     steps:
       - name: Checkout Repository
@@ -23,23 +23,31 @@ jobs:
           dotnet workload install maui maui-maccatalyst
           dotnet workload restore
 
-      - name: Install & Configure Xcode
+      - name: Ensure Correct Xcode Version
         run: |
-          sudo rm -rf /Library/Developer/CommandLineTools
-          sudo xcode-select --reset
-          sudo xcode-select --install || true
           sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
           xcodebuild -version
           xcode-select --print-path
-          xcrun --sdk macosx --show-sdk-path
           ls /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
 
-      - name: Verify Workloads & Xcode Setup
+      - name: Reinstall Xcode Command Line Tools
         run: |
-          dotnet workload list
-          dotnet --info
-          xcodebuild -showsdks
-          xcrun -find actool || echo "actool missing"
+          sudo rm -rf /Library/Developer/CommandLineTools
+          sudo xcode-select --install || true
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          sudo softwareupdate --all --install --force
+          xcodebuild -license accept
+
+      - name: Verify Xcode Tools
+        run: |
+          xcrun -find actool || echo "❌ actool missing!"
+          xcrun --sdk macosx --show-sdk-path
+
+      - name: Clean & Restore Workloads
+        run: |
+          dotnet nuget locals all --clear
+          dotnet workload update
+          dotnet workload restore
 
       - name: Build macOS App
         run: dotnet build -c Release -f net9.0-maccatalyst
