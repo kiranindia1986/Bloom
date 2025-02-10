@@ -33,7 +33,7 @@ jobs:
           zip -r build_artifacts/MyApp.app.zip ./bin/Release/net7.0-maccatalyst/MyApp.app # Adjust path
 
       - name: Upload Artifact (Optional, but highly recommended)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-app
           path: build_artifacts/MyApp.app.zip # Or the path to your .app.zip
