@@ -1,58 +1,39 @@
 name: Build macOS App
 
 on:
-  push:
-    branches:
-      - main
+  push:  # Trigger the workflow on every push (you can customize this)
+    branches: [ main ] # Or your main branch name
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build-macos:
-    runs-on: macos-14  # Use a stable macOS runner
+    runs-on: macos-latest # Use a macOS runner
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3 # Checkout your repository code
 
-      - name: Setup .NET
+      - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: '7.x' # Or 8.x, match your project
+          include-prerelease: false # Set to true if using a preview SDK
 
-      - name: Accept Xcode License
-        run: sudo xcodebuild -license accept
-
-      - name: Ensure Xcode CLI Tools are Installed
-        run: |
-          sudo rm -rf /Library/Developer/CommandLineTools
-          sudo xcode-select --install || true
-          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-          xcode-select --print-path
-
-      - name: Verify Xcode and MacCatalyst SDK
-        run: |
-          xcodebuild -version
-          xcode-select --print-path
-          ls /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/
-
-      - name: Install Required .NET Workloads
-        run: |
-          dotnet workload install maui maui-maccatalyst
-          dotnet workload restore
-
-      - name: Fix Missing Actool and Assets Issue
-        run: |
-          sudo softwareupdate --all --install --force
-          xcrun -find actool || echo "❌ actool missing!"
-          xcrun --sdk macosx --show-sdk-path
+      - name: Restore NuGet packages
+        run: dotnet restore
 
       - name: Build macOS App
-        run: dotnet build -c Release -f net9.0-maccatalyst
+        run: dotnet build -c Release -f net7.0-maccatalyst # Or your target framework
+        # If your .app is in a specific folder, adjust the path:
+        # run: dotnet build -c Release -f net7.0-maccatalyst -o ./output/macos/
 
-      - name: Publish macOS App
-        run: dotnet publish -c Release -f net9.0-maccatalyst --no-self-contained
+      - name: Archive .app (Optional, but recommended)
+        run: |
+          mkdir -p build_artifacts
+          zip -r build_artifacts/MyApp.app.zip ./bin/Release/net7.0-maccatalyst/MyApp.app # Adjust path
 
-      - name: Upload macOS Build Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Artifact (Optional, but highly recommended)
+        uses: actions/upload-artifact@v3
         with:
-          name: macOS-app
-          path: Bloom/bin/Release/net9.0-maccatalyst/maccatalyst-x64/
+          name: macos-app
+          path: build_artifacts/MyApp.app.zip # Or the path to your .app.zip
