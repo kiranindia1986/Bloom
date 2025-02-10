@@ -10,36 +10,29 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-      # Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up .NET SDK
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.0  # Specify the .NET version you're using
+          dotnet-version: 9.0
 
-      # Restore .NET workloads
-      - name: Restore .NET workloads
-        run: dotnet workload restore
+      - name: Restore .NET Workloads
+        run: |
+          dotnet workload restore
+          dotnet restore
 
-      # Restore NuGet dependencies
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: Build macOS App
+        run: |
+          dotnet build -c Release -f net9.0-maccatalyst
 
-      # Build the macOS app
-      - name: Build macOS app
-        run: dotnet build -c Release -f net9.0-maccatalyst
-
-      # Archive the .app file
-      - name: Archive .app
+      - name: Archive macOS App
         run: |
           mkdir -p build-output
           mv ./bin/Release/net9.0-maccatalyst/*.app ./build-output
 
-      # Upload the .app as an artifact
-      - name: Upload artifact
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macOS-app
