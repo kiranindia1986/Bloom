@@ -4,36 +4,31 @@ on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
-  build-macos:
+  build:
     runs-on: macos-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.0
+          dotnet-version: '9.x'
 
-      - name: Restore .NET Workloads
-        run: |
-          dotnet workload restore
-          dotnet restore
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_15.0.app
+
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: Build macOS App
-        run: |
-          dotnet build -c Release -f net9.0-maccatalyst
+        run: dotnet build -c Release -f net9.0-maccatalyst
 
-      - name: Archive macOS App
-        run: |
-          mkdir -p build-output
-          mv ./bin/Release/net9.0-maccatalyst/*.app ./build-output
-
-      - name: Upload Build Artifacts
+      - name: Publish macOS App
         uses: actions/upload-artifact@v4
         with:
-          name: macOS-app
-          path: build-output/*.app
+          name: Bloom-macOS
+          path: |
+            **/bin/Release/net9.0-maccatalyst/*.app
