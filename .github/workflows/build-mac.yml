@@ -25,16 +25,15 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Install Required Workloads
+      - name: Install Required Workloads & Runtime Packs
         run: |
-          dotnet workload install maui
-          dotnet workload install maui-android maui-ios maui-maccatalyst
+          dotnet workload install maui maui-maccatalyst
           dotnet workload restore
-        working-directory: Bloom  # Change based on `ls -R` output
+        working-directory: Bloom  # Adjust if needed
 
       - name: Build MacCatalyst App
         run: dotnet publish -c Release -f net9.0-maccatalyst --no-self-contained
-        working-directory: Bloom  # Change based on `ls -R` output
+        working-directory: Bloom  # Adjust if needed
 
       - name: Upload MacCatalyst Build
         uses: actions/upload-artifact@v4
