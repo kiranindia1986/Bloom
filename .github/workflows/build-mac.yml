@@ -22,7 +22,8 @@ jobs:
       - name: Install MAUI Workloads
         run: |
           dotnet workload install maui-maccatalyst
-          dotnet workload install android  # VERY IMPORTANT: Add this line!
+          dotnet workload install android
+          dotnet workload install ios   # Add this line for the iOS workload
 
       - name: Restore NuGet packages
         run: dotnet restore
