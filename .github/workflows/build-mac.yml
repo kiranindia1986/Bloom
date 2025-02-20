@@ -12,17 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup .NET
+      - name: Setup .NET 8.0
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install MAUI Workload
-        run: dotnet workload install maui
-
-      # ✅ Update NuGet source (to avoid duplicate error)
-      - name: Update NuGet Source
-        run: dotnet nuget update source nuget.org --source https://api.nuget.org/v3/index.json
+      - name: Install MAUI Workload 8.0
+        run: dotnet workload install maui --skip-sign-check --source https://api.nuget.org/v3/index.json
 
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
