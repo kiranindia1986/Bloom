@@ -20,8 +20,9 @@ jobs:
       - name: Install MAUI Workload
         run: dotnet workload install maui
 
+      # ✅ Corrected Restore Command
       - name: Restore Dependencies (macOS Only)
-        run: dotnet restore Bloom/Bloom.csproj -f net8.0-maccatalyst
+        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
 
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
