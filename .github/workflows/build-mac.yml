@@ -28,7 +28,7 @@ jobs:
         run: dotnet workload update
 
       - name: Explicitly Restore Dependencies (Force, Diagnostic)
-        run: dotnet restore MauiTest.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config -v:d --force
+        run: dotnet restore Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config -v:d --force
 
       - name: Build MAUI App
         run: dotnet build Bloom.csproj -c Release -f net9.0-maccatalyst
