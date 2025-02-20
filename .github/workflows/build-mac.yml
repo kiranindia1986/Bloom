@@ -20,6 +20,9 @@ jobs:
       - name: Install MAUI Workload
         run: dotnet workload install maui
 
+      - name: Restore Dependencies
+        run: dotnet restore Bloom/Bloom.csproj
+
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish -p:EnableWindowsTargeting=true
 
