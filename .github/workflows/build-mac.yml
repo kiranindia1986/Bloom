@@ -22,13 +22,13 @@ jobs:
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
-      # ✅ Add Official MAUI Feed (if not exists)
-      - name: Add MAUI NuGet Feed
+      # ✅ Ensure NuGet.org is configured
+      - name: Ensure NuGet.org Source
         run: |
-          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --store-password-in-clear-text || true
-          dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/maui/nuget/v3/index.json -n maui --store-password-in-clear-text || true
+          dotnet nuget remove source maui || true
+          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --store-password-in-clear-text
 
-      # ✅ Install MAUI Workload with MacCatalyst
+      # ✅ Install MAUI Workload (including MacCatalyst)
       - name: Install MAUI Workload
         run: dotnet workload install maui maccatalyst --skip-manifest-update
 
