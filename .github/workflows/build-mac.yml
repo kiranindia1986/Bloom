@@ -22,16 +22,13 @@ jobs:
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
-      # ✅ Add NuGet Source (if not exists)
-      - name: Add NuGet Source (if missing)
+      # ✅ Add Official MAUI Feed (if not exists)
+      - name: Add MAUI NuGet Feed
         run: |
-          if ! dotnet nuget list source | grep -q "nuget.org"; then
-            dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --store-password-in-clear-text
-          else
-            echo "NuGet source 'nuget.org' already exists."
-          fi
+          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --store-password-in-clear-text || true
+          dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/maui/nuget/v3/index.json -n maui --store-password-in-clear-text || true
 
-      # ✅ Install MAUI Workload with MacCatalyst Support
+      # ✅ Install MAUI Workload with MacCatalyst
       - name: Install MAUI Workload
         run: dotnet workload install maui maccatalyst --skip-manifest-update
 
