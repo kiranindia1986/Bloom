@@ -18,13 +18,19 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Add MAUI NuGet Feed
+      - name: Add Official NuGet Source
         run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org --store-password-in-clear-text || true
+
+      - name: Add MAUI Preview Feed
+        run: dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/maui/nuget/v3/index.json --name maui --store-password-in-clear-text || true
 
       - name: Install MAUI Workload
         run: dotnet workload install maui
 
-      - name: Restore Dependencies for MacCatalyst
+      - name: Clear NuGet Cache (Optional if Issues Persist)
+        run: dotnet nuget locals all --clear
+
+      - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
 
       - name: Build MAUI App for macOS
