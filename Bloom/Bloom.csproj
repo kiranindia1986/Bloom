@@ -35,6 +35,10 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
+<PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+    <TargetFramework>net8.0-maccatalyst</TargetFramework>
+  </PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
