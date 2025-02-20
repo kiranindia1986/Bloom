@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-13  # ✅ Use macOS 13 for stability
+    runs-on: macos-13
 
     steps:
       - name: Checkout Repository
@@ -28,6 +28,9 @@ jobs:
 
       - name: Add NuGet.org as Explicit Source
         run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org --store-password-in-clear-text || true
+
+      - name: Add MAUI NuGet Feed
+        run: dotnet nuget add source https://api.nuget.org/v3/index.json --name maui-feed --store-password-in-clear-text || true
 
       - name: Install MAUI Workload
         run: dotnet workload install maui --source https://api.nuget.org/v3/index.json --ignore-failed-sources
