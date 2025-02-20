@@ -27,9 +27,6 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config
 
-      - name: Restore Workloads
-        run: dotnet workload restore
-
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net9.0-maccatalyst -c Release -o ./publish
 
