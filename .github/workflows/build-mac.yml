@@ -1,46 +1,30 @@
-name: Build macOS App
+name: Build MAUI for macOS
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-macos:
-    runs-on: macos-14
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install .NET SDK
+      - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.x'  # Or your .NET version
-          include-prerelease: false
+          dotnet-version: '8.0.x'
 
-      - name: Install MAUI Workloads
-        run: |
-          dotnet workload install maui-maccatalyst
-          dotnet workload install android
-          dotnet workload install ios   # Add this line for the iOS workload
+      - name: Install MAUI Workload
+        run: dotnet workload install maui
 
-      - name: Restore NuGet packages
-        run: dotnet restore
+      - name: Build MAUI App for macOS
+        run: dotnet publish -f net8.0-maccatalyst -c Release -o ./publish
 
-      - name: Check Xcode Version
-        run: xcodebuild -version
-
-      - name: Build macOS App
-        run: dotnet build -c Release -f net9.0-maccatalyst
-
-      - name: Archive .app
-        run: |
-          mkdir -p build_artifacts
-          zip -r build_artifacts/MyApp.app.zip ./bin/Release/net9.0-maccatalyst/MyApp.app  # Adjust path
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
         with:
           name: macos-app
-          path: build_artifacts/MyApp.app.zip  # Adjust path
+          path: ./publish
