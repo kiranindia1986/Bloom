@@ -21,7 +21,7 @@ jobs:
         run: dotnet workload install maui
 
       - name: Build MAUI App for macOS
-        run: dotnet publish -f net8.0-maccatalyst -c Release -o ./publish
+        run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
