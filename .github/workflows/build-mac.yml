@@ -18,26 +18,31 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # Remove old MAUI feed
-      - name: Remove Old MAUI Feed
-        run: dotnet nuget remove source maui || true
+      # ✅ Clear NuGet Cache to prevent stale data issues
+      - name: Clear NuGet Cache
+        run: dotnet nuget locals all --clear
 
-      # Add Official NuGet Source
+      # ✅ Ensure Official NuGet Source is Used
       - name: Add Official NuGet Source
         run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org --store-password-in-clear-text || true
 
+      # ✅ Install MAUI Workload
       - name: Install MAUI Workload
         run: dotnet workload install maui
 
-      - name: Clear NuGet Cache (optional if issues persist)
-        run: dotnet nuget locals all --clear
+      # ✅ Update MAUI Workloads
+      - name: Update Workloads
+        run: dotnet workload update
 
+      # ✅ Restore Dependencies for MAUI (macOS)
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
 
+      # ✅ Build MAUI App for macOS
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
 
+      # ✅ Upload Build Artifacts
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
