@@ -21,25 +21,16 @@ jobs:
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
-      - name: Remove Any Existing Broken Feeds
-        run: |
-          dotnet nuget remove source maui || true
-          dotnet nuget remove source dnceng || true
-
-      - name: Add NuGet.org as Explicit Source
-        run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org --store-password-in-clear-text || true
-
-      - name: Add MAUI NuGet Feed
-        run: dotnet nuget add source https://api.nuget.org/v3/index.json --name maui-feed --store-password-in-clear-text || true
+      # nuget.config now handles sources
 
       - name: Install MAUI Workload
-        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json --ignore-failed-sources
+        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json #--ignore-failed-sources  <- Remove for debugging
 
       - name: Update All Workloads
         run: dotnet workload update
 
       - name: Explicitly Restore Dependencies
-        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst --source https://api.nuget.org/v3/index.json
+        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst -v Detailed #<- Detailed output
 
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
