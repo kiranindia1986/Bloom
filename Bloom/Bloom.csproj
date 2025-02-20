@@ -3,7 +3,7 @@
 	<PropertyGroup>
   <EnableWindowsTargeting>false</EnableWindowsTargeting>
 
-		<TargetFrameworks>net8.0-maccatalyst;net8.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net8.0-maccatalyst;net8.0-windows10.0.19041.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>Bloom</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -29,6 +29,11 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
+
+  <!-- ✅ Condition to enable Windows targeting only on Windows -->
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
