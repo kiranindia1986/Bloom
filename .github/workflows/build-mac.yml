@@ -10,41 +10,34 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      # ✅ Setup .NET 8.0
-      - name: Setup .NET 8.0
+      - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      # ✅ Clear NuGet Cache
-      - name: Clear NuGet Cache
-        run: dotnet nuget locals all --clear
-
-      # ✅ Ensure NuGet.org is configured
-      - name: Ensure NuGet.org Source
-        run: |
-          dotnet nuget remove source maui || true
-          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --store-password-in-clear-text
-
-      # ✅ Install MAUI Workload (including MacCatalyst)
       - name: Install MAUI Workload
-        run: dotnet workload install maui maccatalyst --skip-manifest-update
+        run: dotnet workload install maui
 
-      # ✅ Verify Installed Workloads
-      - name: Verify Workloads
-        run: dotnet workload list
+      # 🟡 ✅ Add this block to safely remove the deprecated 'maui' feed
+      - name: Remove Deprecated MAUI Feed
+        run: |
+          dotnet nuget list source
+          if dotnet nuget list source | grep -q "maui"; then
+            dotnet nuget remove source maui
+            echo "'maui' source removed."
+          else
+            echo "No 'maui' source found. Continuing..."
+          fi
 
-      # ✅ Restore Dependencies (MacCatalyst)
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
 
-      # ✅ Build MAUI App for macOS
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
 
-      # ✅ Upload Build Artifact
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
