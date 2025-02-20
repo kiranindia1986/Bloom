@@ -17,8 +17,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install MAUI Workload
-        run: dotnet workload install maui
+      - name: Clear NuGet Cache
+        run: dotnet nuget locals all --clear
+
+      - name: Install MAUI Workload with MacCatalyst
+        run: dotnet workload install maui maccatalyst --source https://api.nuget.org/v3/index.json
+
+      - name: Verify MAUI Workloads
+        run: dotnet workload list
 
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
