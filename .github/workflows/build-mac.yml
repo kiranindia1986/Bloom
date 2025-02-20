@@ -13,26 +13,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup .NET
+      - name: Setup .NET 8.0
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
+      - name: Add MAUI NuGet Feed
+        run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org --store-password-in-clear-text || true
+
       - name: Install MAUI Workload
         run: dotnet workload install maui
 
-      # 🟡 ✅ Add this block to safely remove the deprecated 'maui' feed
-      - name: Remove Deprecated MAUI Feed
-        run: |
-          dotnet nuget list source
-          if dotnet nuget list source | grep -q "maui"; then
-            dotnet nuget remove source maui
-            echo "'maui' source removed."
-          else
-            echo "No 'maui' source found. Continuing..."
-          fi
-
-      - name: Restore Dependencies
+      - name: Restore Dependencies for MacCatalyst
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
 
       - name: Build MAUI App for macOS
