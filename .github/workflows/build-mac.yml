@@ -29,8 +29,11 @@ jobs:
       - name: Update All Workloads
         run: dotnet workload update
 
-      - name: Explicitly Restore Dependencies
-        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst -v Detailed #<- Detailed output
+      - name: Remove Old MAUI Package (If Present)
+        run: dotnet remove Bloom/Bloom.csproj package Microsoft.Maui || true
+
+      - name: Explicitly Restore Dependencies (Verbose) # Or -d for diagnostic
+        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst --configfile nuget.config -v # Or -d for diagnostic
 
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
