@@ -7,7 +7,8 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <RootNamespace>Bloom</RootNamespace>
-    <TargetFrameworks>net8.0-maccatalyst;net8.0-windows10.0.19041</TargetFrameworks>
+    <TargetFrameworks>net9.0-maccatalyst;net9.0-windows10.0.19041</TargetFrameworks>
+
 
     <ApplicationTitle>Bloom</ApplicationTitle>
     <ApplicationId>com.companyname.bloom</ApplicationId>
@@ -21,6 +22,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui" Version="8.0.6" />  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.6" />  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.6" />  <PackageReference Include="CommunityToolkit.Maui" Version="11.1.0" />  </ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.6" />  <PackageReference Include="CommunityToolkit.Maui" Version="12.0.0" />  </ItemGroup>
 
 </Project>
