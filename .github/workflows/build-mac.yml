@@ -13,10 +13,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup .NET 8.0
+      - name: Setup .NET 9.0
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '9.0.x'
 
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
@@ -36,10 +36,10 @@ jobs:
         run: rm packages.lock.json || true
 
       - name: Explicitly Restore Dependencies (Force, Diagnostic)
-        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst --configfile nuget.config -v:d --force
+        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config -v:d --force
 
       - name: Build MAUI App for macOS
-        run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
+        run: dotnet publish Bloom/Bloom.csproj -f net9.0-maccatalyst -c Release -o ./publish
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
