@@ -7,33 +7,20 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <RootNamespace>Bloom</RootNamespace>
-    <TargetFrameworks>net8.0-maccatalyst;net8.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net8.0-maccatalyst;net8.0-windows10.0.19041</TargetFrameworks>
 
     <ApplicationTitle>Bloom</ApplicationTitle>
     <ApplicationId>com.companyname.bloom</ApplicationId>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
 
-    <!-- Supported Platforms -->
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 
-    <!-- Disable Windows Targeting on Mac -->
-    <EnableWindowsTargeting>false</EnableWindowsTargeting>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
-  </PropertyGroup>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>  </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Maui" Version="8.0.3" />
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.3" />
-    <PackageReference Include="CommunityToolkit.Maui" Version="11.0.0" />
-</ItemGroup>
-
+    <PackageReference Include="Microsoft.Maui" Version="8.0.6" />  <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />  <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.6" />  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.6" />  <PackageReference Include="CommunityToolkit.Maui" Version="12.0.0" />  </ItemGroup>
 
 </Project>
