@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # ✅ Install .NET 8.0 SDK
+      # ✅ Setup .NET 8.0
       - name: Setup .NET 8.0
         uses: actions/setup-dotnet@v3
         with:
@@ -22,11 +22,7 @@ jobs:
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
-      # ✅ Check if NuGet Source Already Exists
-      - name: Check NuGet Sources
-        run: dotnet nuget list source
-
-      # ✅ Conditionally Add NuGet Source (if not exists)
+      # ✅ Add NuGet Source (if not exists)
       - name: Add NuGet Source (if missing)
         run: |
           if ! dotnet nuget list source | grep -q "nuget.org"; then
@@ -35,7 +31,7 @@ jobs:
             echo "NuGet source 'nuget.org' already exists."
           fi
 
-      # ✅ Install MAUI Workload with MacCatalyst
+      # ✅ Install MAUI Workload with MacCatalyst Support
       - name: Install MAUI Workload
         run: dotnet workload install maui maccatalyst --skip-manifest-update
 
@@ -47,11 +43,11 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
 
-      # ✅ Build MAUI App for Mac
+      # ✅ Build MAUI App for macOS
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
 
-      # ✅ Upload the Build Artifact
+      # ✅ Upload Build Artifact
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
