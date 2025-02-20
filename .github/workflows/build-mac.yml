@@ -1,4 +1,4 @@
-name: Build MAUI for macOS
+name: Build MAUI Test
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build-macos:
-    runs-on: macos-13
+  build-maui:
+    runs-on: macos-13 # Or a suitable runner
 
     steps:
       - name: Checkout Repository
@@ -21,28 +21,23 @@ jobs:
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
-      # nuget.config now handles sources
-
       - name: Install MAUI Workload
-        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json #--ignore-failed-sources  <- Remove for debugging
+        run: dotnet workload install maui --source https://api.nuget.org/v3/index.json
 
       - name: Update All Workloads
         run: dotnet workload update
 
-      - name: Remove Old MAUI Package (If Present)
-        run: dotnet remove Bloom/Bloom.csproj package Microsoft.Maui || true
-
-      - name: Remove packages.lock.json (If Present)
-        run: rm packages.lock.json || true
-
       - name: Explicitly Restore Dependencies (Force, Diagnostic)
-        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config -v:d --force
+        run: dotnet restore MauiTest.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config -v:d --force
 
-      - name: Build MAUI App for macOS
-        run: dotnet publish Bloom/Bloom.csproj -f net9.0-maccatalyst -c Release -o ./publish
+      - name: Build MAUI App
+        run: dotnet build MauiTest.csproj -c Release -f net9.0-maccatalyst
 
-      - name: Upload Build Artifacts
+      - name: Check .NET Version
+        run: dotnet --version # Verify .NET 9 is used
+
+      - name: Upload Build Artifacts (Optional)
         uses: actions/upload-artifact@v4
         with:
-          name: macos-app
-          path: ./publish
+          name: maui-test-app
+          path: bin/Release/net9.0-maccatalyst/* # Adjust path if necessary
