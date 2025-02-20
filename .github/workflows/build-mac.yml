@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-13  # Use stable macOS image
+    runs-on: macos-13  # ✅ Use macOS 13 for stability
 
     steps:
       - name: Checkout Repository
@@ -21,7 +21,12 @@ jobs:
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
-      - name: Add Official NuGet Source
+      - name: Remove Any Existing Broken Feeds
+        run: |
+          dotnet nuget remove source maui || true
+          dotnet nuget remove source dnceng || true
+
+      - name: Add NuGet.org as Explicit Source
         run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org --store-password-in-clear-text || true
 
       - name: Install MAUI Workload
@@ -30,11 +35,8 @@ jobs:
       - name: Update All Workloads
         run: dotnet workload update
 
-      - name: Restore MAUI Dependencies
-        run: dotnet workload restore
-
-      - name: Restore Dependencies for macOS
-        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
+      - name: Explicitly Restore Dependencies
+        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst --source https://api.nuget.org/v3/index.json
 
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net8.0-maccatalyst -c Release -o ./publish
