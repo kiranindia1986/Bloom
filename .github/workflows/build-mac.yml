@@ -20,9 +20,9 @@ jobs:
       - name: Install MAUI Workload
         run: dotnet workload install maui
 
-      # ✅ Add MAUI Source if not available
-      - name: Add MAUI NuGet Source
-        run: dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
+      # ✅ Update NuGet source (to avoid duplicate error)
+      - name: Update NuGet Source
+        run: dotnet nuget update source nuget.org --source https://api.nuget.org/v3/index.json
 
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net8.0-maccatalyst
