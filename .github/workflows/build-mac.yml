@@ -1,4 +1,4 @@
-name: Build MAUI Test
+name: Build MAUI for macOS
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-maui:
+  build-macos:
     runs-on: macos-latest
 
     steps:
@@ -18,11 +18,17 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
+      - name: Install MAUI Workload
+        run: dotnet workload install maui maui-maccatalyst
+
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config
+
+      - name: Restore Workloads
+        run: dotnet workload restore
 
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net9.0-maccatalyst -c Release -o ./publish
