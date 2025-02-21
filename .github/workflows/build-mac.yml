@@ -4,32 +4,48 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-macos:
     runs-on: macos-latest
 
     steps:
+      # 📁 Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup .NET 9.0
+      # 🔧 Setup .NET SDK (ensure version 9.0.x for net9.0-maccatalyst)
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
 
+      # 📥 Setup NuGet Sources and Clear Cache
+      - name: Configure NuGet and Clear Cache
+        run: |
+          dotnet nuget remove source dotnet-public || true
+          dotnet nuget remove source maui || true
+          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
+          dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json -n dotnet-public
+          dotnet nuget locals all --clear
+
+      # 🛠️ Install MAUI Workloads
       - name: Install MAUI Workload
-        run: dotnet workload install maui maui-maccatalyst
+        run: |
+          dotnet workload install maui maui-maccatalyst
 
-      - name: Clear NuGet Cache
-        run: dotnet nuget locals all --clear
-
+      # 📦 Restore Dependencies
       - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config
 
+      # 🏗️ Build the Project for macOS
       - name: Build MAUI App for macOS
         run: dotnet publish Bloom/Bloom.csproj -f net9.0-maccatalyst -c Release -o ./publish
 
+      # 📤 Upload Build Artifacts
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
