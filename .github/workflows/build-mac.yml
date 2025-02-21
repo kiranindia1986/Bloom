@@ -30,10 +30,18 @@ jobs:
       # Configure NuGet sources
       - name: Configure NuGet sources
         run: |
-          dotnet nuget remove source dotnet-public || true
-          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
-          dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json -n dotnet-public
-          dotnet nuget list source
+          # Define the source name and URL
+          SOURCE_NAME="dotnet-public"
+          SOURCE_URL="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"
+
+          # Check if the source already exists
+          if dotnet nuget list source | grep -q "$SOURCE_NAME"; then
+            # If the source exists, update it
+            dotnet nuget update source $SOURCE_NAME --source $SOURCE_URL
+          else
+            # If the source does not exist, add it
+            dotnet nuget add source $SOURCE_URL -n $SOURCE_NAME
+          fi
 
       # Restore dependencies
       - name: Restore dependencies
