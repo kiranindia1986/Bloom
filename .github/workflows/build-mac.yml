@@ -17,24 +17,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 🔧 Setup .NET SDK (using 9.0.x for net9.0-maccatalyst)
+      # 🔧 Setup .NET SDK (9.x)
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
 
-      # 🧹 Clean NuGet sources and Clear Cache
-      - name: Clean and Configure NuGet
+      # 🧹 Clean and Manage NuGet Sources
+      - name: Configure NuGet Sources
         run: |
+          echo "Listing existing NuGet sources..."
           dotnet nuget list source
-          dotnet nuget remove source dotnet-public || true
-          dotnet nuget remove source maui || true
-          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --store-password-in-clear-text
-          dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json -n dotnet-public --store-password-in-clear-text
+
+          echo "Removing existing 'dotnet-public' source if it exists..."
+          dotnet nuget remove source dotnet-public || echo "dotnet-public source not found."
+
+          echo "Adding 'dotnet-public' source..."
+          dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json -n dotnet-public --store-password-in-clear-text || echo "dotnet-public already exists."
+
+          echo "Ensuring 'nuget.org' source is added..."
+          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --store-password-in-clear-text || echo "nuget.org already exists."
+
+          echo "Clearing NuGet cache..."
           dotnet nuget locals all --clear
 
       # 🛠️ Install MAUI Workloads
-      - name: Install MAUI Workload
+      - name: Install MAUI Workloads
         run: |
           dotnet workload install maui maui-maccatalyst
 
