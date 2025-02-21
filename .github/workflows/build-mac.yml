@@ -1,4 +1,4 @@
-name: Build MAUI for macOS
+name: Build MAUI App for Mac Catalyst
 
 on:
   push:
@@ -9,54 +9,47 @@ on:
       - main
 
 jobs:
-  build-macos:
+  build:
     runs-on: macos-latest
 
     steps:
-      # 📁 Checkout the repo
-      - name: Checkout repository
+      # Checkout the repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # 🔧 Setup .NET SDK (9.x)
+      # Setup .NET SDK
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
 
-      # 🧹 Clean and Manage NuGet Sources
-      - name: Configure NuGet Sources
+      # Install MAUI Workloads
+      - name: Install MAUI Workloads
+        run: dotnet workload install maui
+
+      # Configure NuGet sources
+      - name: Configure NuGet sources
         run: |
-          echo "Listing existing NuGet sources..."
+          dotnet nuget remove source dotnet-public || true
+          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
+          dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json -n dotnet-public
           dotnet nuget list source
 
-          echo "Removing existing 'dotnet-public' source if it exists..."
-          dotnet nuget remove source dotnet-public || echo "dotnet-public source not found."
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst
 
-          echo "Adding 'dotnet-public' source..."
-          dotnet nuget add source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json -n dotnet-public --store-password-in-clear-text || echo "dotnet-public already exists."
+      # Build the project
+      - name: Build project
+        run: dotnet build Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configuration Release
 
-          echo "Ensuring 'nuget.org' source is added..."
-          dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org --store-password-in-clear-text || echo "nuget.org already exists."
+      # Publish the app
+      - name: Publish app
+        run: dotnet publish Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configuration Release --output ./publish
 
-          echo "Clearing NuGet cache..."
-          dotnet nuget locals all --clear
-
-      # 🛠️ Install MAUI Workloads
-      - name: Install MAUI Workloads
-        run: |
-          dotnet workload install maui maui-maccatalyst
-
-      # 📦 Restore Dependencies
-      - name: Restore Dependencies
-        run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configfile nuget.config
-
-      # 🏗️ Build the Project for macOS
-      - name: Build MAUI App for macOS
-        run: dotnet publish Bloom/Bloom.csproj -f net9.0-maccatalyst -c Release -o ./publish
-
-      # 📤 Upload Build Artifacts
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+      # Upload build artifacts
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: macos-app
+          name: maccatalyst-app
           path: ./publish
