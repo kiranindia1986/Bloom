@@ -14,21 +14,34 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
 
+    <!-- ✅ Disable Windows Targeting by Default -->
     <EnableWindowsTargeting>false</EnableWindowsTargeting>
   </PropertyGroup>
 
+  <!-- ✅ Enable Windows Targeting Only on Windows -->
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
+  <!-- ✅ Platform-Specific Supported Versions -->
+  <PropertyGroup>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
   <ItemGroup>
-    <!-- ✅ Updated Versions -->
+    <!-- ✅ Updated Package Versions -->
     <PackageReference Include="Microsoft.Maui" Version="9.0.40" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.40" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.40" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.1" />
     <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.40" />
     <PackageReference Include="CommunityToolkit.Maui" Version="12.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ✅ Example: Add Assets if Needed -->
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>
