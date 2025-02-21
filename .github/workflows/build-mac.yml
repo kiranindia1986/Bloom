@@ -21,31 +21,29 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Install MAUI Workloads
+      - name: Install MAUI Workload
         run: |
           dotnet workload install maui
           dotnet workload restore
 
-      - name: Configure NuGet sources
+      - name: Configure NuGet Sources
         run: |
-          SOURCE_NAME="dotnet-public"
-          SOURCE_URL="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"
-          if dotnet nuget list source | grep -q "$SOURCE_NAME"; then
-            dotnet nuget update source $SOURCE_NAME --source $SOURCE_URL
-          else
-            dotnet nuget add source $SOURCE_URL -n $SOURCE_NAME
-          fi
+          # Remove deprecated or unnecessary sources
+          dotnet nuget remove source dotnet-public || true
 
-      - name: Restore dependencies
+          # Add required sources if necessary
+          # dotnet nuget add source <source_url> -n <source_name>
+
+      - name: Restore Dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst
 
-      - name: Build project
+      - name: Build Project
         run: dotnet build Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configuration Release
 
-      - name: Publish app
+      - name: Publish App
         run: dotnet publish Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configuration Release --output ./publish
 
-      - name: Upload build artifacts
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: maccatalyst-app
