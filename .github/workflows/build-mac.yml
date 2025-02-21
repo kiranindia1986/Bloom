@@ -13,49 +13,38 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Setup .NET SDK
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
 
-      # Install MAUI Workloads
       - name: Install MAUI Workloads
-        run: dotnet workload install maui
+        run: |
+          dotnet workload install maui
+          dotnet workload restore
 
-      # Configure NuGet sources
       - name: Configure NuGet sources
         run: |
-          # Define the source name and URL
           SOURCE_NAME="dotnet-public"
           SOURCE_URL="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"
-
-          # Check if the source already exists
           if dotnet nuget list source | grep -q "$SOURCE_NAME"; then
-            # If the source exists, update it
             dotnet nuget update source $SOURCE_NAME --source $SOURCE_URL
           else
-            # If the source does not exist, add it
             dotnet nuget add source $SOURCE_URL -n $SOURCE_NAME
           fi
 
-      # Restore dependencies
       - name: Restore dependencies
         run: dotnet restore Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst
 
-      # Build the project
       - name: Build project
         run: dotnet build Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configuration Release
 
-      # Publish the app
       - name: Publish app
         run: dotnet publish Bloom/Bloom.csproj --property:TargetFramework=net9.0-maccatalyst --configuration Release --output ./publish
 
-      # Upload build artifacts
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
